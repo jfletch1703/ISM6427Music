@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Velvet Keys — Soulful R&amp;B Generator</title>
+  <meta name="description" content="Generate soulful, piano-driven R&B songs with AI." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎹</text></svg>" />
+</head>
+<body>
+  <div class="keys" aria-hidden="true"></div>
+
+  <header class="hero">
+    <p class="eyebrow">AI Soul Studio</p>
+    <h1>Velvet <em>Keys</em></h1>
+    <p class="sub">Write a feeling. Get a soulful, piano-led R&amp;B song — warm vocals, gospel runs, lush chords.</p>
+    <div class="credits" id="credits">Checking credits…</div>
+  </header>
+
+  <main class="wrap">
+    <section class="card" aria-labelledby="create-h">
+      <h2 id="create-h">Create your song</h2>
+
+      <form id="form" autocomplete="off">
+        <fieldset class="vibes">
+          <legend>Pick a vibe</legend>
+          <div class="chips" id="vibes">
+            <label><input type="radio" name="vibe" value="ballad" checked /><span>🎹 Piano Ballad</span></label>
+            <label><input type="radio" name="vibe" value="gospel" /><span>⛪ Gospel Soul</span></label>
+            <label><input type="radio" name="vibe" value="slowjam" /><span>🌙 Slow Jam</span></label>
+            <label><input type="radio" name="vibe" value="neosoul" /><span>🎷 Neo-Soul Groove</span></label>
+            <label><input type="radio" name="vibe" value="wedding" /><span>💍 First Dance</span></label>
+            <label><input type="radio" name="vibe" value="heartbreak" /><span>💔 Heartbreak</span></label>
+            <label><input type="radio" name="vibe" value="uptempo" /><span>☀️ Feel-Good</span></label>
+          </div>
+        </fieldset>
+
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" class="tab active" data-mode="simple" aria-selected="true">Describe it</button>
+          <button type="button" role="tab" class="tab" data-mode="custom" aria-selected="false">Write my own lyrics</button>
+        </div>
+
+        <div class="mode" data-panel="simple">
+          <label for="description">What's the song about?</label>
+          <textarea id="description" rows="4" maxlength="2500" placeholder="e.g. Falling in love all over again with my wife on our 10th anniversary, dancing in the kitchen at midnight"></textarea>
+          <p class="hint">The AI writes the lyrics for you.</p>
+        </div>
+
+        <div class="mode hidden" data-panel="custom">
+          <label for="title">Song title</label>
+          <input id="title" type="text" maxlength="80" placeholder="All of You Tonight" />
+
+          <div class="label-row">
+            <label for="lyrics">Lyrics</label>
+            <button type="button" class="link" id="lyricsBtn">✨ Help me write lyrics</button>
+          </div>
+          <textarea id="lyrics" rows="10" maxlength="5000" placeholder="[Verse]&#10;Your hand in mine beneath the city light...&#10;&#10;[Chorus]&#10;..."></textarea>
+          <p class="hint">Use tags like [Verse], [Chorus], [Bridge] to shape the song.</p>
+        </div>
+
+        <details class="more">
+          <summary>More options</summary>
+          <div class="grid">
+            <div>
+              <label for="vocal">Vocals</label>
+              <select id="vocal">
+                <option value="m">Male (smooth tenor)</option>
+                <option value="f">Female</option>
+              </select>
+            </div>
+            <div>
+              <label for="model">Model</label>
+              <select id="model">
+                <option value="V6">V6 — best quality</option>
+                <option value="V6_WILD">V6 Wild — bolder</option>
+                <option value="V6_MINI">V6 Mini — faster</option>
+              </select>
+            </div>
+          </div>
+          <label for="extraStyle">Extra style touches <span class="opt">(optional)</span></label>
+          <input id="extraStyle" type="text" maxlength="200" placeholder="e.g. saxophone solo, rain sounds, 90s vibe" />
+          <label class="check"><input type="checkbox" id="instrumental" /> Instrumental only (no vocals)</label>
+        </details>
+
+        <button class="primary" id="go" type="submit">Generate song</button>
+        <p class="error" id="error" role="alert"></p>
+      </form>
+    </section>
+
+    <section class="card status hidden" id="statusCard" aria-live="polite">
+      <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div>
+        <strong id="statusText">Warming up the piano…</strong>
+        <p class="hint">Songs usually take 1–3 minutes. A preview can start streaming early.</p>
+      </div>
+    </section>
+
+    <section id="results" class="results" aria-label="Your songs"></section>
+
+    <section class="history" aria-labelledby="hist-h">
+      <div class="label-row">
+        <h2 id="hist-h">Your library</h2>
+        <button type="button" class="link" id="clearHist">Clear</button>
+      </div>
+      <div id="history" class="results"></div>
+      <p class="hint" id="histEmpty">Songs you create will appear here (saved in this browser).</p>
+    </section>
+  </main>
+
+  <dialog id="lyricsDlg">
+    <form method="dialog" class="dlg">
+      <h3>Lyrics helper</h3>
+      <label for="lyricsIdea">What should the song say? <span class="opt">(max ~150 chars)</span></label>
+      <input id="lyricsIdea" type="text" maxlength="150" placeholder="Promising forever to someone who saved me" />
+      <div id="lyricsOut" class="lyrics-out"></div>
+      <div class="dlg-actions">
+        <button value="cancel" class="ghost">Close</button>
+        <button type="button" class="primary small" id="lyricsGo">Write lyrics</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="trackTpl">
+    <article class="track">
+      <img class="cover" alt="" loading="lazy" />
+      <div class="body">
+        <h3 class="t-title"></h3>
+        <p class="t-tags"></p>
+        <audio controls preload="none"></audio>
+        <div class="t-actions">
+          <a class="dl" download target="_blank" rel="noopener">⬇ Download MP3</a>
+          <button type="button" class="link show-lyrics">Lyrics</button>
+        </div>
+        <pre class="t-lyrics hidden"></pre>
+      </div>
+    </article>
+  </template>
+
+  <footer>Built with SunoAPI.org · Style inspired by modern soul &amp; R&amp;B</footer>
+  <script src="app.js"></script>
+</body>
+</html>
